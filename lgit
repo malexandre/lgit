@@ -63,9 +63,11 @@ __lgitMergeAndPushToMaster()
 		local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 		local commits_behind=`git rev-list --left-right $current_branch...origin/master | grep -c "^>"`
 		if [ $commits_behind = 0 ]; then
-			git checkout master
-			git reset --hard origin/master
-			git merge $current_branch
+			if [ "$current_branch" != "master" ]; then
+				git checkout master
+				git reset --hard origin/master
+				git merge $current_branch
+			fi
 			git push origin master
 			git checkout $current_branch
 		else
