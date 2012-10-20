@@ -96,14 +96,56 @@ __lgitPush()
 __lgitPushForce()
 {
 	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-	read -p "Do you want to force push the branch $current_branch ? (y/n)"
+	read -p "Do you want to force push the branch $current_branch ? (y/n) "
 	[ "$REPLY" == "y" ] || git push -f origin $current_branch
+}
+
+__lgitRebaseMerge()
+{
+	local fileToMerge=`git ls-files -u | sort -k4,4 -u | awk -F $'\t'  '{ print $(NF)}' | paste -sd " "`
+	git mergetool -y
+	read -p "Do you want to abort or continue the rebase ? (a/c) "
+	if [ "$REPLY" == "c" ]; then
+		git add "$fileToMerge"
+		rm -rf *.orig
+	else
+		git rebase --abort
+		exit -1
+	fi
 }
 
 __lgitRebase()
 {
 	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	local rebase_branch="$1"
 	git fetch
+	local commits_behind=`git rev-list --left-right $current_branch...$rebase_branch | grep -c "^>"`
+	if [ $commits_behind != 0 ]; then
+		if git rebase "$rebase_branch" | grep -q "CONFLICT" -o; then
+			__lgitRebaseMerge
+			while test -d ".git/rebase-merge" -o -d ".git/rebase-apply"; do
+				local rebaseContinue=`git rebase --continue`
+				if echo "$rebaseContinue" | grep -q "CONFLICT"; then
+					__lgitRebaseMerge
+					if [ $? -ne 0 ]; then
+						echo "Rebase aborted"
+						exit 0
+					fi
+				elif echo "$rebaseContinue" | grep "No changes - did you forget to use 'git add'?"; then
+					if git rebase --skip | grep -q "CONFLICT"; then
+						__lgitRebaseMerge
+						if [ $? -ne 0 ]; then
+							echo "Rebase aborted"
+							exit 0
+						fi
+					fi
+				fi
+			done
+		fi
+		echo "Rebase successful"
+	else
+		echo "Current branch $current_branch is already up to date"
+	fi
 }
 
 ############################
@@ -123,7 +165,11 @@ elif [[ -d ./.git ]]; then
 	elif [[ "$1" == "push-force" ]]; then
 		__lgitPushForce
 	elif [[ "$1" == "rebase" ]]; then
-		__lgitRebase
+		if [ $# -eq 1 ]; then
+			__lgitRebase "origin/master"
+		else
+			__lgitRebase "$2"
+		fi
 	else
 		echo -e "\e[01;31mlgit: '$1' is not a lgit command.\e[00m"
 	fi
