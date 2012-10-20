@@ -3,7 +3,7 @@
 __lgitGetOptionsList()
 {
 	if [[ -d ./.git ]]; then
-		echo "master-push move push-force rebase"
+		echo "master-push move push push-force rebase"
 	else
 		echo "init init-push"
 	fi

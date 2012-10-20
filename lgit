@@ -3,7 +3,7 @@
 #############################
 ## Private implementation ###
 #############################
-__gitInit()
+__lgitInit()
 {
 	if [[ -d ./.git ]]; then
 		echo -e "\e[01;31mlgit: can't add a git repo inside another git repo\e[00m"
@@ -28,7 +28,7 @@ __gitInit()
 	cd ..
 }
 
-__gitInitAndPush()
+__lgitInitAndPush()
 {
 	if [[ -d ./.git ]]; then
 		echo -e "\e[01;31mlgit: already a repo git\e[00m"
@@ -55,32 +55,7 @@ __gitInitAndPush()
 	git push -u origin master
 }
 
-__gitMoveToBranch()
-{
-	git show-ref --verify --quiet refs/heads/"$1" &>-
-	if [ "$?" -ne 0 ]; then
-		echo -e "\e[01;31mlgit: branch '$1' doesn't exist\e[00m"
-		exit -1;
-	fi
-	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-	git checkout "$1"
-	git reset --hard $current_branch	
-}
-
-__gitGUIRebase()
-{
-	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-	git fetch
-}
-
-__gitPushForce()
-{
-	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-	read -p "Do you want to force push the branch $current_branch ? (y/n)"
-	[ "$REPLY" == "y" ] || git push -f origin $current_branch
-}
-
-__gitMergeAndPushToMaster()
+__lgitMergeAndPushToMaster()
 {
 	git update-index -q --refresh
 	if git diff-index --quiet HEAD --; then
@@ -101,22 +76,54 @@ __gitMergeAndPushToMaster()
 	fi
 }
 
+__lgitMoveToBranch()
+{
+	git show-ref --verify --quiet refs/heads/"$1" &>-
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[01;31mlgit: branch '$1' doesn't exist\e[00m"
+		exit -1;
+	fi
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	git checkout "$1"
+	git reset --hard $current_branch	
+}
+
+__lgitPush()
+{
+	git push origin `git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+}
+
+__lgitPushForce()
+{
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	read -p "Do you want to force push the branch $current_branch ? (y/n)"
+	[ "$REPLY" == "y" ] || git push -f origin $current_branch
+}
+
+__lgitRebase()
+{
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	git fetch
+}
+
 ############################
 ## call management #########
 ############################
 if [[ "$1" == "init" ]]; then
-	__gitInit $2 $3
+	__lgitInit $2 $3
 elif [[ "$1" == "init-push" ]]; then
-	__gitInitAndPush $2
+	__lgitInitAndPush $2
 elif [[ -d ./.git ]]; then
 	if [[ "$1" == "master-push" ]]; then
-		__gitMergeAndPushToMaster
+		__lgitMergeAndPushToMaster
 	elif [[ "$1" == "move" ]]; then
-		__gitMoveToBranch $2
+		__lgitMoveToBranch $2
+	elif [[ "$1" == "push" ]]; then
+		__lgitPush
 	elif [[ "$1" == "push-force" ]]; then
-		__gitPushForce
+		__lgitPushForce
 	elif [[ "$1" == "rebase" ]]; then
-		__gitGUIRebase
+		__lgitRebase
 	else
 		echo -e "\e[01;31mlgit: '$1' is not a lgit command.\e[00m"
 	fi

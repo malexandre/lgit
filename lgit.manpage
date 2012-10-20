@@ -42,6 +42,9 @@ An error message will be displayed and the command will not be executed if the b
 .SS lgit-move
 .IP "lgit move <branch-name>"
 Checkout the branch <branch-name>, and hard reset it from the current branch. The <branch-name> is not optional.
+.SS lgit-push
+.IP "lgit push"
+Push only the current branch.
 .SS lgit-push-force
 .IP "lgit push-force"
 Prompt a "y/n" question with the name of the current branch before calling a force push for it.
