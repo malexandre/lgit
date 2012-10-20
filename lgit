@@ -26,7 +26,7 @@ __gitInit()
 	git fetch
 	git reset --hard origin/master
 	cd ..
-}git show-ref --verify --quiet refs/heads/<branch-name>
+}
 
 __gitMoveToBranch()
 {
