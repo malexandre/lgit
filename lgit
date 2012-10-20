@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 #############################
 ## Private implementation ###
@@ -13,7 +13,7 @@ __gitInit()
 		echo -e "\e[01;31mlgit: folder '$1' already exists\e[00m"
 		exit -1
 	fi
-	git ls-remote "$2" &>-
+	git ls-remote "$2" &> /dev/null
 	if [ "$?" -ne 0 ]; then
 		echo -e "\e[01;31mlgit: unable to read from '$2'\e[00m"
 		exit -1;
@@ -26,6 +26,33 @@ __gitInit()
 	git fetch
 	git reset --hard origin/master
 	cd ..
+}
+
+__gitInitAndPush()
+{
+	if [[ -d ./.git ]]; then
+		echo -e "\e[01;31mlgit: already a repo git\e[00m"
+		exit -1
+	fi
+	git ls-remote "$1" &> /dev/null
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[01;31mlgit: unable to read from '$1'\e[00m"
+		exit -1;
+	fi
+
+	echo "git init"
+	git init
+	echo "git remote add origin $1";
+	git remote add origin "$1"
+	echo "git fetch"
+	git fetch
+	echo "git checkout master"
+	git checkout master
+	echo "git add ."
+	git add .
+	echo "git commit -m \"LGit initialize repo from local folder\""
+	git commit -m "LGit initialize repo from local folder"
+	git push -u origin master
 }
 
 __gitMoveToBranch()
@@ -79,6 +106,8 @@ __gitMergeAndPushToMaster()
 ############################
 if [[ "$1" == "init" ]]; then
 	__gitInit $2 $3
+elif [[ "$1" == "init-push" ]]; then
+	__gitInitAndPush $2
 elif [[ -d ./.git ]]; then
 	if [[ "$1" == "master-push" ]]; then
 		__gitMergeAndPushToMaster

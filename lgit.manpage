@@ -31,20 +31,23 @@ The <arg> is the name of the branch to work with. The actual checkout branch wil
 .SS lgit-init
 .IP "lgit init <folder> <git-repo>"
 Create the <folder>, initialize and fetch the origin/master of the <git-repo>.
+.SS lgit-init-push
+.IP "lgit init-push <git-repo>"
+Set the current folder as a git repo, and push the content into the remote master.
 .SS lgit-master-push
-.IP "lgit master-push [<branch-name>]"
-Hard reset the local master to the remote master, merge the branch <branch-name> into the local master, and push it to the remote master.
+.IP "lgit master-push"
+Hard reset the local master to the remote master, merge the current checkouted branch into the local master, and push it to the remote master.
 .IP
 An error message will be displayed and the command will not be executed if the branch <branch-name> has not been rebase from the remote master, or if there is uncommit changes in the branch.
 .SS lgit-move
 .IP "lgit move <branch-name>"
 Checkout the branch <branch-name>, and hard reset it from the current branch. The <branch-name> is not optional.
 .SS lgit-push-force
-.IP "lgit push-force [<branch-name>]"
-Prompt a "y/n" question with the name of the branch before calling a force push for it.
+.IP "lgit push-force"
+Prompt a "y/n" question with the name of the current branch before calling a force push for it.
 .SS lgit-rebase
 .IP "lgit rebase <branch-name>"
-Rebase the current branch from the branch <branch-name>. Use the GUI set in the .gitconfig.
+Rebase the current branch from the branch <branch-name>. Use the GUI set in the .gitconfig. The <branch-name> is not optional.
 .SH NOTES
 This could have been done with git aliases, but it seems easier to share this script than have each member of a project add the aliases to its .gitconfig.
 .SH BUGS

@@ -6,19 +6,26 @@ __lgitcompletion()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	opts="move rebase push-force master-push init"
+	opts="move rebase push-force master-push init init-push"
 
 	case "${prev}" in
-		move)
-			local branches=$(for x in `git branch | tr -d "\* "`; do echo ${x} ; done )
+		"move")
+			local branches=$(if [[ -d ./.git ]]; then for x in `git branch | tr -d "\* "`; do echo ${x} ; done; fi )
 			COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
 			return 0
 			;;
+		"rebase")
+			local branches=$(if [[ -d ./.git ]]; then for x in `git branch | tr -d "\* "`; do echo ${x} ; done; fi )
+			COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
+			return 0
+			;;
+		"lgit")
+			COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+			return 0
+			;;
 		*)
+			return 0
 			;;
 	esac
-
-	COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
-	return 0
 }
 complete -F __lgitcompletion lgit
