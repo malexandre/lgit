@@ -69,7 +69,9 @@ __lgitMergeAndPushToMaster()
 				git merge $current_branch
 			fi
 			git push origin master
-			git checkout $current_branch
+			if [ "$current_branch" != "master" ]; then
+				git checkout $current_branch
+			fi
 		else
 			echo -e "\e[01;31mlgit: $commits_behind commits behind, please rebase your branch\e[00m"
 		fi
