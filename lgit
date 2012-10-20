@@ -26,12 +26,17 @@ __gitInit()
 	git fetch
 	git reset --hard origin/master
 	cd ..
-}
+}git show-ref --verify --quiet refs/heads/<branch-name>
 
 __gitMoveToBranch()
 {
+	git show-ref --verify --quiet refs/heads/"$1" &>-
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[01;31mlgit: branch '$1' doesn't exist\e[00m"
+		exit -1;
+	fi
 	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-	git checkout $1
+	git checkout "$1"
 	git reset --hard $current_branch	
 }
 
