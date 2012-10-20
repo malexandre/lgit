@@ -49,8 +49,8 @@ Push only the current branch.
 .IP "lgit push-force"
 Prompt a "y/n" question with the name of the current branch before calling a force push for it.
 .SS lgit-rebase
-.IP "lgit rebase <branch-name>"
-Rebase the current branch from the branch <branch-name>. Use the GUI set in the .gitconfig. The <branch-name> is not optional.
+.IP "lgit rebase [<branch-name>]"
+Rebase the current branch from the branch <branch-name>. Use the GUI set in the .gitconfig. If no <branch-name> is given, rebase from the remote master.
 .SH NOTES
 This could have been done with git aliases, but it seems easier to share this script than have each member of a project add the aliases to its .gitconfig.
 .SH BUGS
