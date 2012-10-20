@@ -29,22 +29,22 @@ The <commands> is a LGit command (see below).
 The <arg> is the name of the branch to work with. The actual checkout branch will be used if there is no <arg>.
 .SH LGIT COMMANDS
 .SS lgit-init
-.IP "lgit init <folder> <git_repo>"
-Create the <folder>, initialize and fetch the origin/master of the <git_repo>.
+.IP "lgit init <folder> <git-repo>"
+Create the <folder>, initialize and fetch the origin/master of the <git-repo>.
 .SS lgit-master-push
-.IP "lgit master-push [<branch_name>]"
-Hard reset the local master to the remote master, merge the branch <branch_name> into the local master, and push it to the remote master.
+.IP "lgit master-push [<branch-name>]"
+Hard reset the local master to the remote master, merge the branch <branch-name> into the local master, and push it to the remote master.
 .IP
-An error message will be displayed and the command will not be executed if the branch <branch_name> has not been rebase from the remote master, or if there is uncommit changes in the branch.
+An error message will be displayed and the command will not be executed if the branch <branch-name> has not been rebase from the remote master, or if there is uncommit changes in the branch.
 .SS lgit-move
-.IP "lgit move <branch_name>"
-Checkout the branch <branch_name>, and hard reset it from the current branch. The <branch_name> is not optional.
+.IP "lgit move <branch-name>"
+Checkout the branch <branch-name>, and hard reset it from the current branch. The <branch-name> is not optional.
 .SS lgit-push-force
-.IP "lgit push-force [<branch_name>]"
+.IP "lgit push-force [<branch-name>]"
 Prompt a "y/n" question with the name of the branch before calling a force push for it.
 .SS lgit-rebase
-.IP "lgit rebase <branch_name>"
-Rebase the current branch from the branch <branch_name>. Use the GUI set in the .gitconfig.
+.IP "lgit rebase <branch-name>"
+Rebase the current branch from the branch <branch-name>. Use the GUI set in the .gitconfig.
 .SH NOTES
 This could have been done with git aliases, but it seems easier to share this script than have each member of a project add the aliases to its .gitconfig.
 .SH BUGS
