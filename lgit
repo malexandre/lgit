@@ -35,20 +35,20 @@ __gitMoveToBranch()
 		echo -e "\e[01;31mlgit: branch '$1' doesn't exist\e[00m"
 		exit -1;
 	fi
-	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 	git checkout "$1"
 	git reset --hard $current_branch	
 }
 
 __gitGUIRebase()
 {
-	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 	git fetch
 }
 
 __gitPushForce()
 {
-	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 	read -p "Do you want to force push the branch $current_branch ? (y/n)"
 	[ "$REPLY" == "y" ] || git push -f origin $current_branch
 }
@@ -58,8 +58,8 @@ __gitMergeAndPushToMaster()
 	git update-index -q --refresh
 	if git diff-index --quiet HEAD --; then
 		git fetch
-		current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
-		commits_behind=`git rev-list --left-right $current_branch...origin/master | grep -c "^>"`
+		local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+		local commits_behind=`git rev-list --left-right $current_branch...origin/master | grep -c "^>"`
 		if [ $commits_behind = 0 ]; then
 			git checkout master
 			git reset --hard origin/master
