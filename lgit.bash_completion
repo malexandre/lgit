@@ -1,6 +1,24 @@
 #!/bin/bash
 
-__lgitcompletion() 
+__lgitGetOptionsList()
+{
+	if [[ -d ./.git ]]; then
+		echo "master-push move push-force rebase"
+	else
+		echo "init init-push"
+	fi
+}
+
+__lgitGetBranches()
+{
+	if [[ -d ./.git ]]; then
+		for x in `git branch | tr -d "\* "`; do
+			echo ${x}
+		done
+	fi
+}
+
+__lgitCompletion() 
 {
 	local cur prev opts base
 	COMPREPLY=()
@@ -10,17 +28,15 @@ __lgitcompletion()
 
 	case "${prev}" in
 		"move")
-			local branches=$(if [[ -d ./.git ]]; then for x in `git branch | tr -d "\* "`; do echo ${x} ; done; fi )
-			COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
+			COMPREPLY=( $(compgen -W "$(__lgitGetBranches)" -- ${cur}) )
 			return 0
 			;;
 		"rebase")
-			local branches=$(if [[ -d ./.git ]]; then for x in `git branch | tr -d "\* "`; do echo ${x} ; done; fi )
-			COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
+			COMPREPLY=( $(compgen -W "$(__lgitGetBranches)" -- ${cur}) )
 			return 0
 			;;
 		"lgit")
-			COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+			COMPREPLY=($(compgen -W "$(__lgitGetOptionsList)" -- ${cur}))  
 			return 0
 			;;
 		*)
@@ -28,4 +44,4 @@ __lgitcompletion()
 			;;
 	esac
 }
-complete -F __lgitcompletion lgit
+complete -F __lgitCompletion lgit
