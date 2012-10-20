@@ -1,0 +1,52 @@
+'\" t
+.\"     Title: lgit
+.\"    Author: [see the "Authors" section]
+.\"      Date: 10/19/2012
+.\"    Manual: LGit Manual
+.\"    Source: LGit 1.0
+.\"  Language: English
+.TH "LGIT" "7" "19 October 2012" "LGit 1.0" "LGit Manual"
+.SH NAME
+lgit \- general macro for git
+.SH SYNOPSIS
+lgit <commands> [<arg>]
+.SH DESCRIPTION
+LGit is a set of macro for git. It allows you to make some general set of action like forcing a push for only one branch, or push the content of the current branch to the remote master via a merge. It is designed to be used with the following git workflow :
+.br
+- 1 master containing the last updated version ready for production
+.br
+- 1 branch X by user or by task
+.br
+- Rebase from the remote master to the branch X
+.br
+- Reset of the local master to the remote master
+.br
+- Merge from the branch X to the local master
+.br
+- Push of the local master to the remote master
+
+The <commands> is a LGit command (see below).
+The <arg> is the name of the branch to work with. The actual checkout branch will be used if there is no <arg>.
+.SH LGIT COMMANDS
+.SS lgit-master-push
+.IP "lgit master-push [<branch_name>]"
+Hard reset the local master to the remote master, merge the branch <branch_name> into the local master, and push it to the remote master.
+.IP
+An error message will be displayed and the command will not be executed if the branch <branch_name> has not been rebase from the remote master, or if there is uncommit changes in the branch.
+.SS lgit-move
+.IP "lgit move <branch_name>"
+Checkout the branch <branch_name>, and hard reset it from the current branch. The <branch_name> is not optional.
+.SS lgit-push-force
+.IP "lgit push-force [<branch_name>]"
+Prompt a "y/n" question with the name of the branch before calling a force push for it.
+.SS lgit-rebase
+.IP "lgit rebase <branch_name>"
+Rebase the current branch from the branch <branch_name>. Use the GUI set in the .gitconfig.
+.SH NOTES
+This could have been done with git aliases, but it seems easier to share this script than have each member of a project add the aliases to its .gitconfig.
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Marc ALEXANDRE (marc@malexandre.fr)
+.SH SEE ALSO
+git(1)

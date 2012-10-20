@@ -1,0 +1,24 @@
+#!/bin/bash
+
+__lgitcompletion() 
+{
+	local cur prev opts base
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	opts="move rebase push-force master-push init"
+
+	case "${prev}" in
+		move)
+			local branches=$(for x in `git branch | tr -d "\* "`; do echo ${x} ; done )
+			COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
+			return 0
+			;;
+		*)
+			;;
+	esac
+
+	COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+	return 0
+}
+complete -F __lgitcompletion lgit

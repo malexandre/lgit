@@ -1,0 +1,103 @@
+#!/bin/bash
+
+#############################
+## Private implementation ###
+#############################
+__gitInit()
+{
+	if [[ -d ./.git ]]; then
+		echo -e "\e[01;31mlgit: can't add a git repo inside another git repo\e[00m"
+		exit -1
+	fi
+	if [[ -d "./$1" ]]; then
+		echo -e "\e[01;31mlgit: folder '$1' already exists\e[00m"
+		exit -1
+	fi
+	git ls-remote "$2" &>-
+	if [ "$?" -ne 0 ]; then
+		echo -e "\e[01;31mlgit: unable to read from '$2'\e[00m"
+		exit -1;
+	fi
+
+	mkdir $1
+	cd $1
+	git init
+	git remote add origin $2
+	git fetch
+	git reset --hard origin/master
+	cd ..
+}
+
+__gitTest()
+{
+	echo $0
+	echo $1
+	echo $2
+}
+
+__gitMoveToBranch()
+{
+	echo "$1"
+	echo "$2"
+	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	git checkout $1
+	git reset --hard $current_branch	
+}
+
+__gitGUIRebase()
+{
+	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	git fetch
+}
+
+__gitPushForce()
+{
+	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+	read -p "Do you want to force push the branch $current_branch ? (y/n)"
+	[ "$REPLY" == "y" ] || git push -f origin $current_branch
+}
+
+__gitMergeAndPushToMaster()
+{
+	git update-index -q --refresh
+	if git diff-index --quiet HEAD --; then
+		git fetch
+		current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+		commits_behind=`git rev-list --left-right $current_branch...origin/master | grep -c "^>"`
+		if [ $commits_behind = 0 ]; then
+			git checkout master
+			git reset --hard origin/master
+			git merge $current_branch
+			git push origin master
+			git checkout $current_branch
+		else
+			echo -e "\e[01;31mlgit: $commits_behind commits behind, please rebase your branch\e[00m"
+		fi
+	else
+		echo -e "\e[01;31mlgit: ncommited changes, please commit\e[00m"
+	fi
+}
+
+############################
+## call management #########
+############################
+if [[ "$1" == "init" ]]; then
+	__gitInit $2 $3
+elif [[ -d ./.git ]]; then
+	if [[ "$1" == "master-push" ]]; then
+		__gitMergeAndPushToMaster
+	elif [[ "$1" == "move" ]]; then
+		__gitMoveToBranch $2
+	elif [[ "$1" == "push-force" ]]; then
+		__gitPushForce
+	elif [[ "$1" == "rebase" ]]; then
+		__gitGUIRebase
+	elif [[ "$1" == "test" ]]; then
+		__gitTest $2
+	else
+		echo -e "\e[01;31mlgit: '$1' is not a lgit command.\e[00m"
+	fi
+else
+	echo -e "\e[01;31mlgit: must be used in a git repository\e[00m"
+fi
+
