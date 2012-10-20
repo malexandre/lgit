@@ -28,6 +28,9 @@ LGit is a set of macro for git. It allows you to make some general set of action
 The <commands> is a LGit command (see below).
 The <arg> is the name of the branch to work with. The actual checkout branch will be used if there is no <arg>.
 .SH LGIT COMMANDS
+.SS lgit-init
+.IP "lgit init <folder> <git_repo>"
+Create the <folder>, initialize and fetch the origin/master of the <git_repo>.
 .SS lgit-master-push
 .IP "lgit master-push [<branch_name>]"
 Hard reset the local master to the remote master, merge the branch <branch_name> into the local master, and push it to the remote master.
