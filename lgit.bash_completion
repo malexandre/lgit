@@ -11,9 +11,12 @@ __lgitGetOptionsList()
 
 __lgitGetBranches()
 {
+	local current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 	if [[ -d ./.git ]]; then
 		for x in `git branch | tr -d "\* "`; do
-			echo ${x}
+			if [ "$x" != "$current_branch" ]; then
+				echo ${x}
+			fi
 		done
 	fi
 }
