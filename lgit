@@ -28,17 +28,8 @@ __gitInit()
 	cd ..
 }
 
-__gitTest()
-{
-	echo $0
-	echo $1
-	echo $2
-}
-
 __gitMoveToBranch()
 {
-	echo "$1"
-	echo "$2"
 	current_branch=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 	git checkout $1
 	git reset --hard $current_branch	
@@ -92,8 +83,6 @@ elif [[ -d ./.git ]]; then
 		__gitPushForce
 	elif [[ "$1" == "rebase" ]]; then
 		__gitGUIRebase
-	elif [[ "$1" == "test" ]]; then
-		__gitTest $2
 	else
 		echo -e "\e[01;31mlgit: '$1' is not a lgit command.\e[00m"
 	fi
